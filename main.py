@@ -1,16 +1,19 @@
-# This is a sample Python script.
+import requests
+from bs4 import BeautifulSoup
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+URL = "https://www.timeout.com/newyork/movies/best-movies-of-all-time/"
 
+response = requests.get(URL)
+website_html = response.text
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+soup = BeautifulSoup(website_html, "html.parser")
+# print(soup.prettify())
 
+all_movies = soup.find_all(name="h3", class_="_h3_cuogz_1")
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+movie_titles = [movie.getText() for movie in all_movies]
+movies = [movie.replace('\xa0', ' ') for movie in movie_titles]
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+with open("movies.txt", mode="w") as file:
+    for movie in movies:
+        file.write(f"{movie}\n")
